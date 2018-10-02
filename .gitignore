@@ -15,5 +15,4 @@ build
 npm-debug.log
 
 # Untracked files:
-src\index.js
-src/config.js
+src/index.js
