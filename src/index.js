@@ -6,12 +6,12 @@ import App from './App';
 import './index.css';
 
 firebase.initializeApp({
-    apiKey: "AIzaSyAcns7GqLjohHfL-esXKUapbAvZ26P3kLU",
-    authDomain: "patyndervetsadmin.firebaseapp.com",
-    databaseURL: "https://patyndervetsadmin.firebaseio.com",
-    projectId: "patyndervetsadmin",
-    storageBucket: "patyndervetsadmin.appspot.com",
-    messagingSenderId: "1063808229512"
+  apiKey: "AIzaSyAjQ9NwlAXj-C4Cj3MAw9s22asP91EGP7I",
+  authDomain: "petinder-fc7b6.firebaseapp.com",
+  databaseURL: "https://petinder-fc7b6.firebaseio.com",
+  projectId: "petinder-fc7b6",
+  storageBucket: "petinder-fc7b6.appspot.com",
+  messagingSenderId: "331629175639"
 
 });
 

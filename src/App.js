@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
-
+import { Button } from 'semantic-ui-react'
 import './App.css';
 import FileUpload from './FileUpload';
+import { Route } from "react-router-dom";
+import IngrA from "./components/pages/IngreA";
 
 
 class App extends Component {
@@ -10,11 +12,13 @@ class App extends Component {
     super();
     this.state = {
       user: null,
-      pictures: []
+      picturesAnun: [],
+      picturesVet: []
     };
 
     this.handleAuth = this.handleAuth.bind(this);
-    this.handleUpload = this.handleUpload.bind(this);
+    this.handleUploadAnuncios = this.handleUploadAnuncios.bind(this);
+    this.handleUploadVet = this.handleUploadVet.bind(this);
   }
 
   componentWillMount () {
@@ -22,9 +26,10 @@ class App extends Component {
       this.setState({ user });
     });
 
-    firebase.database().ref('pictures').on('child_added', snapshot => {
+    firebase.database().ref('picturesA').on('child_added', snapshot => {
       this.setState({
-        pictures: this.state.pictures.concat(snapshot.val())
+        picturesAnun: this.state.picturesAnun.concat(snapshot.val()),
+        picturesVet: this.state.picturesVet.concat(snapshot.val())
       });
     });
   }
@@ -43,9 +48,9 @@ class App extends Component {
       .catch(error => console.log(`Error ${error.code}: ${error.message}`));
   }
 
-  handleUpload (event) {
+  handleUploadAnuncios (event) {
     const file = event.target.files[0];
-    const storageRef = firebase.storage().ref(`fotos/${file.name}`);
+    const storageRef = firebase.storage().ref(`fotosA/${file.name}`);
     const task = storageRef.put(file);
 
     task.on('state_changed', snapshot => {
@@ -61,7 +66,32 @@ class App extends Component {
         displayName: this.state.user.displayName,
         image: task.snapshot.downloadURL
       }
-      const dbRef = firebase.database().ref('pictures');
+      const dbRef = firebase.database().ref('picturesA');
+      const newPicture = dbRef.push();
+      newPicture.set(record);
+    });
+  }
+
+
+  handleUploadVet (event) {
+    const file = event.target.files[0];
+    const storageRef = firebase.storage().ref(`fotosV/${file.name}`);
+    const task = storageRef.put(file);
+
+    task.on('state_changed', snapshot => {
+      let percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      this.setState({
+        uploadValue: percentage
+      })
+    }, error => {
+      console.error(error.message);
+    }, () => {
+      const record = {
+        photoURL: this.state.user.photoURL,
+        displayName: this.state.user.displayName,
+        image: task.snapshot.downloadURL
+      }
+      const dbRef = firebase.database().ref('picturesV');
       const newPicture = dbRef.push();
       newPicture.set(record);
     });
@@ -82,23 +112,39 @@ class App extends Component {
           <button onClick={this.handleLogout} className="App-btn">
             Salir
           </button>
-
-          <FileUpload onUpload={ this.handleUpload }/>
-
-          {
-            this.state.pictures.map(picture => (
+          <h1>Anuncios</h1>
+          <FileUpload onUpload={ this.handleUploadAnuncios}/>
+          {/* {
+            this.state.picturesAnun.map(picturesAnun => (
               <div className="App-card">
                 <figure className="App-card-image">
-                  <img width="320" src={picture.image} />
+                  <h2>Anucios Ingresados</h2>
+                  <img width="320" src={picturesAnun.image} />
                   <figCaption className="App-card-footer">
-                    <img className="App-card-avatar" src={picture.photoURL} alt={picture.displayName} />
-                    <span className="App-card-name">{picture.displayName}</span>
+                    <img className="App-card-avatar" src={picturesAnun.photoURL} alt={picturesAnun.displayName} />
+                    <span className="App-card-name">{picturesAnun.displayName}</span>
                   </figCaption>
                 </figure>
               </div>
             )).reverse()
-          }
-
+          } */}
+          <h1>Vets</h1>
+          <FileUpload onUpload={ this.handleUploadVet}/>
+          {/* {
+            this.state.picturesVet.map(picturesVet => (
+              <div className="App-card">
+                <figure className="App-card-image">
+                  <h2>Vets Ingresados</h2>
+                  <img width="320" src={picturesVet.image} />
+                  <figCaption className="App-card-footer">
+                    <img className="App-card-avatar" src={picturesVet.photoURL} alt={picturesVet.displayName} />
+                    <span className="App-card-name">{picturesVet.displayName}</span>
+                  </figCaption>
+                </figure>
+              </div>
+            )).reverse()
+          } */}
+  
         </div>
 
       );
